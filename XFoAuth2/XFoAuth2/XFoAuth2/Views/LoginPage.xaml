@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:CustomRenderer="clr-namespace:XFoAuth2.CustomRenderer"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFoAuth2.Views.LoginPage">
+
+    <Grid
+        RowSpacing="0" ColumnSpacing="0"
+        >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!--應用程式名稱文字-->
+        <Label 
+            Grid.Row="0" Grid.Column="0"
+            VerticalOptions="Center" HorizontalOptions="Center"
+            Text="{Binding Title}" TextColor="#e0421f"
+            FontSize="Large"
+            />
+
+        <!--使用者登入方式選擇-->
+        <Grid
+            Grid.Row="1" Grid.Column="0"
+            RowSpacing="0" ColumnSpacing="0"
+            Margin="30,0,30,0"
+            >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--使用者自行輸入帳號與密碼的認證方式-->
+            <CustomRenderer:FontAwesomeLabel
+                Grid.Row="0" Grid.Column="0"
+                Text="&#xf007;"
+                TextColor="#ff3333"
+                HorizontalOptions="Center" VerticalOptions="Center"
+                FontSize="30"
+                Margin="0,0,0,0"
+                />
+            <Entry
+                Grid.Row="0" Grid.Column="1"
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Placeholder="請輸入您的帳號" 
+                Text="{Binding 帳號}" TextColor="Black"/>
+            <CustomRenderer:FontAwesomeLabel
+                Grid.Row="1" Grid.Column="0"
+                Text="&#xf023;"
+                TextColor="#ff3333"
+                HorizontalOptions="Center" VerticalOptions="Center"
+                FontSize="30"
+                Margin="0,0,0,0"
+                />
+            <Entry
+                Grid.Row="1" Grid.Column="1"
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Placeholder="請輸入您的密碼" 
+                Text="{Binding 密碼}" TextColor="Black"
+                />
+            <Button
+                Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                HorizontalOptions="Center" VerticalOptions="Center"
+                WidthRequest="150"
+                Text="登入" TextColor="White"
+                BackgroundColor="#849187"
+                Command="{Binding 登入Command}" />
+            <Grid
+                Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                HorizontalOptions="Center"
+                >
+                <Label
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    Text="註冊一個新帳號" TextColor="#0000ff"
+                    FontAttributes="Bold"
+                    >
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding 點選註冊一個新帳號Command}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <BoxView
+                    HorizontalOptions="Fill" VerticalOptions="End"
+                    Color="#0000ff"
+                    HeightRequest="1"
+                    />
+            </Grid>
+            
+            <!--另外兩種認證方式-->
+            <Button
+                Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Text="Facebook" TextColor="White"
+                HeightRequest="50"
+                BackgroundColor="#2253a3"
+                Command="{Binding FacebookButtonCommand}" />
+            <Button 
+                Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Text="Google" TextColor="White"
+                HeightRequest="50"
+                BackgroundColor="#fca416"
+                Command="{Binding GoogleButtonCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>
