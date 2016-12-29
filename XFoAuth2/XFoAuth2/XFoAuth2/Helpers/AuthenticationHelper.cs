@@ -17,6 +17,7 @@ namespace XFoAuth2.Helpers
     /// </summary>
     public static class Constants
     {
+        public const string IDAccountProperty = "id";
         public const string NameAccountProperty = "Name";
         public const string EmailAccountProperty = "email";
         public const string PhotoAccountProperty = "photo";
@@ -141,6 +142,7 @@ namespace XFoAuth2.Helpers
                     var foo = user;
                    
                     #region 將認證通過的相關使用者明細資訊，儲存到 Account 物件內
+                    account.Properties[Constants.IDAccountProperty] = user.Id;
                     account.Properties[Constants.NameAccountProperty] = user.Name;
                     account.Properties[Constants.EmailAccountProperty] = user.Email;
                     account.Properties[Constants.PhotoAccountProperty] = user.Picture;
@@ -172,8 +174,10 @@ namespace XFoAuth2.Helpers
                     var userJson = response.GetResponseText();
                     string fooJson = userJson;
                     var user = JsonConvert.DeserializeObject<FacebookUserProfile>(userJson);
-               
+                    var foo = user;
+
                     #region 將認證通過的相關使用者明細資訊，儲存到 Account 物件內
+                    account.Properties[Constants.IDAccountProperty] = user.id;
                     account.Properties[Constants.NameAccountProperty] = $"{user.first_name} {user.name}";
                     account.Properties[Constants.EmailAccountProperty] = user.email;
                     account.Properties[Constants.PhotoAccountProperty] = user.picture.data.url;

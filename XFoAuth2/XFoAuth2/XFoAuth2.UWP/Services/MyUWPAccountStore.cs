@@ -40,6 +40,7 @@ namespace XFoAuth2.UWP.Services
                 {Constants.EmailAccountProperty,fooAccessTokenResponse.email},
                 {Constants.PhotoAccountProperty,fooAccessTokenResponse.photo},
                 {Constants.LoginTypeAccountProperty,fooAccessTokenResponse.LoginType},
+                {Constants.IDAccountProperty,fooAccessTokenResponse.id},
             };
 
                 fooAccount = new Account(null, responseDict);
@@ -68,6 +69,7 @@ namespace XFoAuth2.UWP.Services
             fooAccessTokenResponse.access_token = account.Properties[Constants.access_tokenAccountProperty];
             fooAccessTokenResponse.expires_in = account.Properties[Constants.expires_inAccountProperty];
             fooAccessTokenResponse.token_type = account.Properties[Constants.token_typeAccountProperty];
+            fooAccessTokenResponse.id = account.Properties[Constants.IDAccountProperty];
 
             var fooStr = JsonConvert.SerializeObject(fooAccessTokenResponse);
 
