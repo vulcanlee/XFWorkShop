@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FontAwesomeLabelRenderer.cs" />
-    <Compile Include="oAuthPageRenderer.cs" />
+    <Compile Include="CustomRenderer\oAuthPageRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

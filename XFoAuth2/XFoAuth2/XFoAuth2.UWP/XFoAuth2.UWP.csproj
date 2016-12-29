@@ -100,7 +100,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="oAuthPageRenderer.cs" />
+    <Compile Include="CustomRenderer\oAuthPageRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\MyUWPAccountStore.cs" />
   </ItemGroup>

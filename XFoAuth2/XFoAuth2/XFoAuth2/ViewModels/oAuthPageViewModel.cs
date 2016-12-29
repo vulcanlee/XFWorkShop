@@ -38,10 +38,10 @@ namespace XFoAuth2.ViewModels
             fooSubscriptionToken = _eventAggregator.GetEvent<AuthEvent>().Subscribe(async x =>
               {
                   await _navigationService.GoBackAsync();
-                  if (x == "Success")
+                  if (x == AuthEventEnum.身分驗證成功)
                   {
                       // 送出通知事件，告知 登入頁面，需要自動切換到下一個頁面，也就是首頁
-                      _eventAggregator.GetEvent<LoginEvent>().Publish("Refresh");
+                      _eventAggregator.GetEvent<LoginEvent>().Publish(LoginEventEnum.進入首頁);
                   }
                   else
                   {

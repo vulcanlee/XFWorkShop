@@ -128,7 +128,7 @@ namespace XFoAuth2.ViewModels
             });
             _eventAggregator.GetEvent<LoginEvent>().Subscribe(async x =>
             {
-                if (x == "Refresh")
+                if (x == LoginEventEnum.進入首頁)
                 {
                     // 系統通知需要進入到應用程式的首頁，並且將使用者資訊，傳入到首頁
                     var account = await AuthenticationHelper.IsAlreadyAuthenticated();

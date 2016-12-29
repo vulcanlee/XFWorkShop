@@ -11,9 +11,10 @@ using Xamarin.Forms;
 using XFoAuth2.Views;
 using XFoAuth2.iOS;
 using Xamarin.Forms.Platform.iOS;
+using XFoAuth2.iOS.CustomRenderer;
 
 [assembly: ExportRenderer(typeof(oAuthPage), typeof(oAuthPageRenderer))]
-namespace XFoAuth2.iOS
+namespace XFoAuth2.iOS.CustomRenderer
 {
     // https://developer.xamarin.com/guides/xamarin-forms/custom-renderer/contentpage/
     /// <summary>
@@ -94,11 +95,11 @@ namespace XFoAuth2.iOS
             if (e.IsAuthenticated)
             {
                 await AuthenticationHelper.FetchUserProfile(e.Account);
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Success");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證成功);
             }
             else
             {
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Fail");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證失敗);
             }
         }
     }

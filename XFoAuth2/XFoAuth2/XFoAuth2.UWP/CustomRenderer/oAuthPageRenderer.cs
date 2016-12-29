@@ -17,10 +17,11 @@ using Xamarin.Forms.Platform.UWP;
 using XFoAuth2.Helpers;
 using XFoAuth2.Models;
 using XFoAuth2.UWP;
+using XFoAuth2.UWP.CustomRenderer;
 using XFoAuth2.Views;
 
 [assembly: ExportRenderer(typeof(oAuthPage), typeof(oAuthPageRenderer))]
-namespace XFoAuth2.UWP
+namespace XFoAuth2.UWP.CustomRenderer
 {
     // https://developer.xamarin.com/guides/xamarin-forms/custom-renderer/contentpage/
     /// <summary>
@@ -61,13 +62,13 @@ namespace XFoAuth2.UWP
             var code = await AuthenticateUsingWebAuthenticationBroker();
             if (string.IsNullOrEmpty(code))
             {
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Fail");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證失敗);
             }
             else
             {
                 var account = await ConvertCodeToAccount(code);
                 await AuthenticationHelper.FetchUserProfile(account);
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Success");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證成功);
             }
         }
 

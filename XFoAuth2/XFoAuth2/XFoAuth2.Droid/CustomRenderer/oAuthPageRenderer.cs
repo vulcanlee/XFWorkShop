@@ -21,9 +21,10 @@ using Microsoft.Practices.Unity;
 using Prism.Events;
 using XFoAuth2.Models;
 using Newtonsoft.Json;
+using XFoAuth2.Droid.CustomRenderer;
 
 [assembly: ExportRenderer(typeof(oAuthPage), typeof(oAuthPageRenderer))]
-namespace XFoAuth2.Droid
+namespace XFoAuth2.Droid.CustomRenderer
 {
     // https://developer.xamarin.com/guides/xamarin-forms/custom-renderer/contentpage/
     /// <summary>
@@ -98,11 +99,11 @@ namespace XFoAuth2.Droid
             if (e.IsAuthenticated)
             {
                 await AuthenticationHelper.FetchUserProfile(e.Account);
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Success");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證成功);
             }
             else
             {
-                fooIEventAggregator.GetEvent<AuthEvent>().Publish("Fail");
+                fooIEventAggregator.GetEvent<AuthEvent>().Publish(AuthEventEnum.身分驗證失敗);
             }
         }
     }
