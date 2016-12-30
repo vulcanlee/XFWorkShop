@@ -149,7 +149,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FontAwesomeLabelRenderer.cs" />
+    <Compile Include="CustomRenderer\FontAwesomeLabelRenderer.cs" />
     <Compile Include="CustomRenderer\oAuthPageRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

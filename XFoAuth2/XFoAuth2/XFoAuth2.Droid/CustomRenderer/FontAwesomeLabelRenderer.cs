@@ -14,9 +14,10 @@ using XFoAuth2.CustomRenderer;
 using XFoAuth2.Droid;
 using Xamarin.Forms.Platform.Android;
 using Android.Graphics;
+using XFoAuth2.Droid.CustomRenderer;
 
 [assembly: ExportRenderer(typeof(FontAwesomeLabel), typeof(FontAwesomeLabelRenderer))]
-namespace XFoAuth2.Droid
+namespace XFoAuth2.Droid.CustomRenderer
 {
     public class FontAwesomeLabelRenderer : LabelRenderer
     {

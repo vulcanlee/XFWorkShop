@@ -101,10 +101,8 @@ namespace XFoAuth2.Helpers
             #region 進行 Facebook 身分驗證需要用到的參數
             OAuthParas.Add(new OAuth2AuthenticatorParameter
             {
-                //clientId = "528366920570914",
-                //clientSecret = "3facb3a38cbc74024edff17ffde79ea8",
-                clientId = "218932981848388",
-                clientSecret = "9b823102223b762242ccfdd901866ce2",
+                clientId = "1144209035696864",
+                clientSecret = "5cb5c9154fd9d86ca2c4ff6d003849e5",
                 authorizeUrl = "https://m.facebook.com/dialog/oauth/",
                 accessTokenUrl = "https://graph.facebook.com/v2.8/oauth/access_token",
                 UserInfoUrl = "https://graph.facebook.com/me?fields=email,name,first_name,last_name,gender,picture",
