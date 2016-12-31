@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:Zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+             xmlns:ZxingCommon="clr-namespace:ZXing.Common;assembly=zxing.portable"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFQRCode.Views.MainPage"
+             Title="條碼掃描與產生範例專案"
+             >
+    <StackLayout
+        Margin="20"
+        HorizontalOptions="Center" VerticalOptions="Start">
+        <Label 
+            Grid.Row="0" Grid.Column="0"
+            VerticalOptions="Start" HorizontalOptions="Center"
+            Text="{Binding Title}" TextColor="#e0421f"
+            FontSize="Large"
+            />
+        <!--此處會顯示條碼掃描的結果文字-->
+        <Label Text="{Binding 掃描結果}" />
+        <Button Text="開始掃描" Command="{Binding 開始掃描Command}" />
+        <!--變更與輸入不同文字，底下的二維條碼也會跟著變動-->
+        <Entry 
+            Text="{Binding 要產生的QRCode文字}"
+            Placeholder="請輸入產生條碼的文字"
+            />
+        <Zxing:ZXingBarcodeImageView
+            BarcodeFormat="QR_CODE"
+            Margin="10"
+            WidthRequest="300" HeightRequest="300"
+            BarcodeValue="{Binding 要產生的QRCode文字}">
+            <Zxing:ZXingBarcodeImageView.BarcodeOptions>
+                <ZxingCommon:EncodingOptions Width="300" Height="300" />
+            </Zxing:ZXingBarcodeImageView.BarcodeOptions>
+        </Zxing:ZXingBarcodeImageView>
+    </StackLayout>
+</ContentPage>
