@@ -1,0 +1,1 @@
+﻿這個檔案內容是儲存在 Android 組件中(使用 AndroidAsset)

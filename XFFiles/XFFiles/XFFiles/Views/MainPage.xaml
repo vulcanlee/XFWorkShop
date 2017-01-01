@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFFiles.Views.MainPage"
+             Title="MainPage"
+             x:Name="ThisPage"
+             >
+    <StackLayout
+        Margin="20"
+        HorizontalOptions="Center" VerticalOptions="Start">
+        <Label 
+            Grid.Row="0" Grid.Column="0"
+            VerticalOptions="Start" HorizontalOptions="Center"
+            Text="{Binding Title}" TextColor="#e0421f"
+            FontSize="Large"
+            />
+
+        <!--這裡所使用資料繫結的三種語法，所表示的意義都是一樣的-->
+        <Entry Text="{Binding 使用這登入資訊紀錄.姓名}" Placeholder="請輸入姓名" TextColor="Black"/>
+        <Entry Text="{Binding Path=使用這登入資訊紀錄.帳號}" Placeholder="請輸入帳號" TextColor="Black"/>
+        <Entry Text="{Binding Path=BindingContext.使用這登入資訊紀錄.密碼, Source={x:Reference ThisPage}}" Placeholder="請輸入密碼" IsPassword="True"  TextColor="Black" />
+        <StackLayout
+            Orientation="Horizontal"
+           >
+            <Switch 
+                VerticalOptions="Center"
+                IsToggled="{Binding 使用這登入資訊紀錄.記憶密碼}" />
+            <Label 
+                VerticalOptions="Center"
+                Text="是否記憶密碼" />
+        </StackLayout>
+        <Button Text="登入" Command="{Binding 登入Command}" />
+
+        <ScrollView
+            Orientation="Vertical"
+            >
+            <StackLayout
+                Orientation="Vertical"
+                >
+                
+                <Label Text="讀取來自PCL組件檔案(內嵌資源)" />
+                <Label Text="{Binding 核心PCL專案檔案內容}"
+                       TextColor="Navy" FontSize="Medium"/>
+                
+                <Label Grid.Row="0" Text="讀取來自原生組件檔案(內嵌資源)" />
+                <Label Grid.Row="1" Text="{Binding 原生專案檔案內容}"
+                       TextColor="Navy" FontSize="Medium"
+                       />
+
+                <Label Grid.Row="0" Text="讀取來自原生組件檔案(Content)" />
+                <Label Grid.Row="1" Text="{Binding 原生專案檔案內容Content}"
+                       TextColor="Navy" FontSize="Medium"
+                       />
+            </StackLayout>
+        </ScrollView>
+    </StackLayout>
+</ContentPage>
