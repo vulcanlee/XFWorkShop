@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace XFFiles.Services
 {
+    /// <summary>
+    /// 取得當時作業系統的類型與讀取原生專案內使用了建置動作為非`內嵌資源`的文字檔案內容
+    /// </summary>
     public interface INatvieAssyFile
     {
         /// <summary>
