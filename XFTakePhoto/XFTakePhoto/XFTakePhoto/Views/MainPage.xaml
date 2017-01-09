@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFTakePhoto.Views.MainPage"
+             Title="拍照與上傳到後端伺服器"
+             >
+
+    <ScrollView
+        Orientation="Vertical"
+        Margin="20"
+        >
+        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <Label 
+                VerticalOptions="Start" HorizontalOptions="Center"
+                Text="{Binding Title}" TextColor="#e0421f"
+                FontSize="Large"
+                />
+            
+            <!--拍照按鈕-->
+            <Button Text="拍照" Command="{Binding 拍照Command}" />
+            
+            <!--顯示本地的照片檔案圖片-->
+            <!--這裡使用 ImageSource 類型的物件來作為綁定來源型別-->
+            <Label Text="本地照片"/>
+            <Image x:Name="image" Source="{Binding MyImageSource}" />
+            
+            <!--顯示遠端伺服器上的照片圖片-->
+            <!--這裡使用遠端 URL 文字字串作為綁定來源-->
+            <Label Text="遠端伺服器照片"/>
+            <Image Source="{Binding RemoteImageURL}" />
+        </StackLayout>
+    </ScrollView>
+    
+</ContentPage>
