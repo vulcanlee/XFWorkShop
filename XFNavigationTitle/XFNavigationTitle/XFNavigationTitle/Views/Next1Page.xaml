@@ -4,7 +4,7 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="XFNavigationTitle.Views.Next1Page"
-             Title="第二頁"
+             Title="這是第二頁"
              >
 
     <StackLayout HorizontalOptions="Fill" VerticalOptions="Start"
