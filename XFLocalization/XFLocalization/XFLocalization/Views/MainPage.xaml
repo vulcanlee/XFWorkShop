@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:appRes="clr-namespace:XFLocalization.Resources"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFLocalization.Views.MainPage"
+             Title="MainPage">
+    <Grid
+        RowSpacing="0" ColumnSpacing="0"
+        >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--應用程式名稱文字-->
+        <Label 
+            Grid.Row="0" Grid.Column="0"
+            VerticalOptions="Center" HorizontalOptions="Center"
+            Text="{x:Static appRes:AppResources.多奇數位創意有限公司}" TextColor="#e0421f"
+            FontSize="Large"
+            />
+
+        <!--使用者登入方式選擇-->
+        <StackLayout
+            Grid.Row="1"
+            Orientation="Vertical"
+            Spacing="0"
+            Margin="30,0,30,0"
+            >
+
+            <!--使用者自行輸入帳號與密碼的認證方式-->
+            <Label 
+                VerticalOptions="Center" HorizontalOptions="Start"
+                Text="{x:Static appRes:AppResources.帳號}" TextColor="#e0421f"
+                />
+            <Entry
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Placeholder="{x:Static appRes:AppResources.請輸入您的電子郵件信箱}" 
+                Text="{Binding 帳號}" TextColor="Black"/>
+            <Label 
+                VerticalOptions="Center" HorizontalOptions="Start"
+                Text="{x:Static appRes:AppResources.密碼}" TextColor="#e0421f"
+                />
+            <Entry
+                HorizontalOptions="Fill" VerticalOptions="Center"
+                Placeholder="{x:Static appRes:AppResources.請輸入該帳號使用的密碼}" 
+                Text="{Binding 密碼}" TextColor="Black"
+                />
+            <Button
+                HorizontalOptions="Center" VerticalOptions="Center"
+                WidthRequest="150"
+                Text="{x:Static appRes:AppResources.登入}" TextColor="White"
+                BackgroundColor="#849187"
+                Command="{Binding 登入Command}" />
+        </StackLayout>
+    </Grid>
+</ContentPage>

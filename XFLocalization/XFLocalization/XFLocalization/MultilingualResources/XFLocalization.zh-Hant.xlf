@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="XFLOCALIZATION/RESOURCES/APPRESOURCES.RESX" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
+    <header>
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.1795.0" tool-company="Microsoft" />
+    </header>
+    <body>
+      <group id="XFLOCALIZATION/RESOURCES/APPRESOURCES.RESX" datatype="resx">
+        <trans-unit id="多奇數位創意有限公司" translate="yes" xml:space="preserve">
+          <source>Doggy Digital Creative Inc.</source>
+          <target state="translated">多奇數位創意有限公司</target>
+        </trans-unit>
+        <trans-unit id="密碼" translate="yes" xml:space="preserve">
+          <source>Password</source>
+          <target state="translated">密碼</target>
+        </trans-unit>
+        <trans-unit id="帳號" translate="yes" xml:space="preserve">
+          <source>Account</source>
+          <target state="translated">帳號</target>
+        </trans-unit>
+        <trans-unit id="登入" translate="yes" xml:space="preserve">
+          <source>Login</source>
+          <target state="translated">登入</target>
+        </trans-unit>
+        <trans-unit id="請輸入您的電子郵件信箱" translate="yes" xml:space="preserve">
+          <source>Please enter your Email</source>
+          <target state="translated">請輸入您的電子郵件信箱</target>
+        </trans-unit>
+        <trans-unit id="請輸入該帳號使用的密碼" translate="yes" xml:space="preserve">
+          <source>Please enter your password</source>
+          <target state="translated">請輸入該帳號使用的密碼</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
