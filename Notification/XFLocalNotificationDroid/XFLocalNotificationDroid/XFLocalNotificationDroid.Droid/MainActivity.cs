@@ -43,6 +43,14 @@ namespace XFLocalNotificationDroid.Droid
             var fooApp = new App(new AndroidInitializer());
 
             #region 檢查是否是由通知開啟 App，並且依據通知，切換到適當頁面
+
+            //自訂通知被點擊後的動作
+            //當通知出現在通知欄之後，在習慣的趨使下，有很大的機率會被使用者點擊。
+            //所以應該要實作出通知被點擊後的動作，好比開啟哪個Activity之類的。
+            //通知被點擊後的動作可以使用PendingIntent來實作，PendingIntent並不是一個Intent，它是一個Intent的容器，
+            // 可以傳入context物件，並以這個context的身份來做一些事情，例如開啟Activity、開啟Service，或是發送Broadcast。
+            // 如果要使通知可以在被點擊之後做點什麼事，可以使用Notification.Builder的setContentIntent方法來替通知加入PendingIntent
+
             fooLocalNotificationPayload = null;
             if (Intent.Extras != null)
             {
