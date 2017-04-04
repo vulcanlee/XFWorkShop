@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="XFLocalNotificationiOS.Views.MainPage"
+             Title="本地端訊息通知測試首頁">
+
+    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <StackLayout 
+            Spacing="0"
+            Margin="30,0"
+            HorizontalOptions="Center" VerticalOptions="Center">
+            <Label 
+                Text="主題" />
+            <Entry
+                Text="{Binding Title}" />
+            <Label 
+                Text="內容" />
+            <Editor
+                BackgroundColor="Yellow"
+                Text="{Binding Message}"
+                HeightRequest="70" />
+
+            <Button
+                HorizontalOptions="Fill"
+                Margin="30,0"
+                Text="Launch Notification"
+                Command="{Binding LaunchNotificationCommand}" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

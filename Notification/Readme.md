@@ -8,6 +8,10 @@ Xamarin.Android 本地端的通知的各種組合用法與效果測試
 
 使用GCM進行遠端推播，且可以指定要開啟頁面之練習原始碼
 
+# XFLocalNotificationiOS
+
+Xamarin.iOS 本地端的通知的各種狀況效果測試
+
 # 關於 Xamarin.Android 中，相關本地與遠端通知的網路討論文章
 
 ## Android 如何顯示通知訊息(Notifications)？
