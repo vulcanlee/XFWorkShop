@@ -69,6 +69,22 @@ http://stackoverflow.com/questions/14430552/notification-service-put-extra-on-no
 
 Google Cloud Messaging Client
 
+# UIApplication​Delegate
+
+https://developer.apple.com/reference/uikit/uiapplicationdelegate#//apple_ref/occ/intfm/UIApplicationDelegate/application:didReceiveRemoteNotification:fetchCompletionHandler:
+
+# iOS Push Notifications with Notification Hubs for Xamarin apps
+
+https://docs.microsoft.com/en-us/azure/notification-hubs/xamarin-notification-hubs-ios-push-notification-apns-get-started
+
+# MonoTouch.UIKit.UIApplicationDelegate.FinishedLaunching Method
+
+https://developer.xamarin.com/api/member/MonoTouch.UIKit.UIApplicationDelegate.FinishedLaunching/p/MonoTouch.UIKit.UIApplication/MonoTouch.Foundation.NSDictionary/
+
+# Xamarin.iOS push notifications through Azure push notifications
+
+https://mallibone.com/post/xamarin.ios-push-notifications-through-azure-push-notifications
+
 # NuGet
 
 Xamarin.GooglePlayServices.Gcm

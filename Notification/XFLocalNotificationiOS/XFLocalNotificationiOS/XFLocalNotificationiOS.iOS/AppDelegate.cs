@@ -161,7 +161,7 @@ namespace XFLocalNotificationiOS.iOS
         }
 
     }
-
+    
     public class iOSInitializer : IPlatformInitializer
     {
         public void RegisterTypes(IUnityContainer container)
