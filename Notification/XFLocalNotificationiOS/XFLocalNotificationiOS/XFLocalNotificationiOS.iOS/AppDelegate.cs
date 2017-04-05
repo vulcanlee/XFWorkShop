@@ -30,13 +30,7 @@ namespace XFLocalNotificationiOS.iOS
         {
             global::Xamarin.Forms.Forms.Init();
 
-
-            #region 這個，將會當該應用程式在背景或者沒有執行的時候，且使用點選通知後，將會被執行
-
-            // -----------------------------------------------
-            // 這裡的方法，需要在  LoadApplication(new App(new iOSInitializer())) 程序前先執行
-            // -----------------------------------------------
-
+            #region 要使用者允許接收通知之設定
             //  系統版本是否大於或等於指定的主要和次要值.
             if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
             {
@@ -46,6 +40,13 @@ namespace XFLocalNotificationiOS.iOS
 
                 app.RegisterUserNotificationSettings(notificationSettings);
             }
+            #endregion
+
+            #region 這個，將會當該應用程式在背景或者沒有執行的時候，且使用點選通知後，將會被執行
+
+            // -----------------------------------------------
+            // 這裡的方法，需要在  LoadApplication(new App(new iOSInitializer())) 程序前先執行
+            // -----------------------------------------------
 
             #region 檢查此次啟動應用程式，是否因為點選了通知的關係
             if (options != null)
