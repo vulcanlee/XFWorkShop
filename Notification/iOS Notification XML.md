@@ -1,13 +1,9 @@
-const string templateBodyGCM = "{ \"data\" : {\"message\":\"" + description + "\", \"args\":\"" + args + "\"}}";
-string alert = "{\"aps\":{\"alert\":\"" + description + "\"}, \"args\":{\"launch\":\"" + args + "\"}}";
-
 #  Azure Notification Hub Template (測試傳送)
 
 ## 使用於 iOS 的推播格式之 C# 語法
 
 ### 自行要夾帶的其他內容定義方式
 
-string templateBodyGCM = "{\"data\":{\"message\":\"$(messageParam)\", \"title\":\"$(titleParam)\", \"args\":\"$(argsParam)\"}}";
 string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"args\":\"$(argsParam)\"}}";
 
 ### 最後的 Json 內容
@@ -31,8 +27,6 @@ string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
  {"aps":{"alert":"Notification Hub test notification"}}
 
 ### 增加額外 Payload 的格式
-
-{"aps":{"alert":"你的應用程式有兩個新紀錄產生", "args":{"NavigationPage":"DetaiPage","OtherInformation":"這裡可以放入其他額外資訊","ContentTitle":null,"ContentText":null,"SummaryText":null,"InboxStyleList":[],"Style":0,"Visibility":0,"Priority":0,"Category":0,"LargeIcon":false,"Sound":false,"Vibrate":false}}}
 
 {"aps":{"alert":"你的應用程式有兩個新紀錄產生", "args":"eyJOYXZpZ2F0aW9uUGFnZSI6IkRldGFpbFBhZ2UiLCJPdGhlckluZm9ybWF0aW9uIjoi6YCZ6KOh5Y+v5Lul5pS+5YWl5YW25LuW6aGN5aSW6LOH6KiKIiwiQ29udGVudFRpdGxlIjpudWxsLCJDb250ZW50VGV4dCI6bnVsbCwiU3VtbWFyeVRleHQiOm51bGwsIkluYm94U3R5bGVMaXN0IjpbXSwiU3R5bGUiOjAsIlZpc2liaWxpdHkiOjAsIlByaW9yaXR5IjowLCJDYXRlZ29yeSI6MCwiTGFyZ2VJY29uIjpmYWxzZSwiU291bmQiOmZhbHNlLCJWaWJyYXRlIjpmYWxzZX0="}}
 
