@@ -88,9 +88,11 @@ namespace XFLocalNotificationiOS.iOS
 
             LoadApplication(new App(new iOSInitializer()));
 
-            #region 訂閱要發送本地通知的事件(事件將會從 核心PCL 送出)
-            // 取得 Xamarin.Forms 中的 Prism 注入物件管理容器
+            #region 取得 Xamarin.Forms 中的 Prism 注入物件管理容器
             myContainer = (App.Current as PrismApplication).Container;
+            #endregion
+
+            #region 訂閱要發送本地通知的事件(事件將會從 核心PCL 送出)
             var fooEvent = myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationEvent>().Subscribe(x =>
             {
                 #region 建立本地訊息通知物件
