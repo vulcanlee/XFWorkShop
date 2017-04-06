@@ -7,8 +7,19 @@
              Title="遠端推播訊息通知測試首頁">
     <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <Label Text="{Binding Title}" />
-        <Editor
-            Text="{Binding UpdateInformation}"
-            HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+        <Label Text="{Binding UpdateInformation}" />
+        <Label Text="{Binding NotificationLogInformation}" Margin="0,30" />
+        <StackLayout
+            HorizontalOptions="Center"
+            Orientation="Horizontal">
+            <Button 
+                Text="Read Again" 
+                WidthRequest="150"
+                Command="{Binding ReadAgainCommand}" />
+            <Button 
+                Text="Reset" 
+                WidthRequest="150"
+                Command="{Binding ResetCommand}" />
+        </StackLayout>
     </StackLayout>
 </ContentPage>

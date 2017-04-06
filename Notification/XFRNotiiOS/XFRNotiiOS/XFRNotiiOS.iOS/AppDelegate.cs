@@ -16,6 +16,8 @@ using System.Text;
 using Prism.Events;
 using System.Threading.Tasks;
 using System.Threading;
+using PCLStorage;
+using System.IO;
 
 namespace XFRNotiiOS.iOS
 {
@@ -138,6 +140,8 @@ namespace XFRNotiiOS.iOS
                 Name = "FinishedLaunching",
                 time = DateTime.Now,
             });
+
+            WriteNotificationLog("FinishedLaunching" + DateTime.Now.ToString());
             #endregion
             return base.FinishedLaunching(app, options);
 
@@ -156,31 +160,20 @@ namespace XFRNotiiOS.iOS
                 Name = "RegisteredForRemoteNotifications",
                 time = DateTime.Now,
             });
+            WriteNotificationLog("RegisteredForRemoteNotifications" + DateTime.Now.ToString());
             #endregion
 
+            #region 建立要接收的推播格式
             //string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
-            string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"args\":\"$(argsParam)\"}}";
+            //string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"args\":\"$(argsParam)\"}}";
+            string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"sound\" : \"default\", \"args\":\"$(argsParam)\"}}";
 
             JObject templates = new JObject();
             templates["genericMessage"] = new JObject
             {
                 { "body", templateBodyAPNS}
             };
-
-
-            //Hub.UnregisterAllAsync(deviceToken, (error) => {
-            //    if (error != null)
-            //    {
-            //        Console.WriteLine("Error calling Unregister: {0}", error.ToString());
-            //        return;
-            //    }
-
-            //    NSSet tags = null; // create tags if you want
-            //    Hub.RegisterNativeAsync(deviceToken, tags, (errorCallback) => {
-            //        if (errorCallback != null)
-            //            Console.WriteLine("RegisterNativeAsync error: " + errorCallback.ToString());
-            //    });
-            //});
+            #endregion
 
             #region 註冊新的 DeviceToken 到 Azure 推播中樞內
             #region 取得現在的 DeviceToken
@@ -192,36 +185,22 @@ namespace XFRNotiiOS.iOS
             }
             #endregion
 
-            // 取得先前的 DeviceToken
+            #region 取得先前的 DeviceToken
             // https://developer.apple.com/reference/foundation/nsuserdefaults/1416603-standarduserdefaults
             var oldDeviceToken = NSUserDefaults.StandardUserDefaults.StringForKey("PushDeviceToken");
+            NSUserDefaults.StandardUserDefaults.SetString(DeviceToken, "PushDeviceToken");
+            #endregion
 
-            // DeviceToken 是否有變動過
+            #region DeviceToken 是否有變動過
             if (string.IsNullOrEmpty(oldDeviceToken) || !oldDeviceToken.Equals(DeviceToken))
             {
-
-                //var cs = SBConnectionString.CreateListenAccess(
-                // new NSUrl("sb://#myhubname#.servicebus.windows.net/"),
-                // "#listenkey#");
-
-                //// Register our information with Azure
-                //var hub = new SBNotificationHub(cs, "#myhubname#");
-
-                //hub.RegisterNativeAsync(DeviceToken, null, err => {
-                //    if (err != null)
-                //    {
-                //        Console.WriteLine("Error: " + err.Description);
-                //    }
-                //    else
-                //    {
-                //        Console.WriteLine("Success");
-                //    }
-                //});
+                // 在這裡可以處理當DeviceToken沒有異動時，無須再進行註冊
+                //Push push = GlobalHelper.AzureMobileClient.GetPush();
+                //await push.RegisterAsync(deviceToken, templates);
             }
-
-            NSUserDefaults.StandardUserDefaults.SetString(DeviceToken, "PushDeviceToken");
             Push push = GlobalHelper.AzureMobileClient.GetPush();
             await push.RegisterAsync(deviceToken, templates);
+            #endregion
             #endregion
         }
 
@@ -233,6 +212,7 @@ namespace XFRNotiiOS.iOS
                 Name = "FailedToRegisterForRemoteNotifications",
                 time = DateTime.Now,
             });
+            WriteNotificationLog("FailedToRegisterForRemoteNotifications" + DateTime.Now.ToString());
             #endregion
 
             var alert = new UIAlertView("警告", "註冊 APNS 失敗", null, "OK", null);
@@ -253,6 +233,7 @@ namespace XFRNotiiOS.iOS
                 Name = "DidReceiveRemoteNotification",
                 time = DateTime.Now,
             });
+            WriteNotificationLog("DidReceiveRemoteNotification" + DateTime.Now.ToString());
             #endregion
 
             if (CoolStartApp == true)
@@ -296,8 +277,10 @@ namespace XFRNotiiOS.iOS
                 #endregion
             }
             #endregion
+
         }
 
+        
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
             #region 檢測點
@@ -306,12 +289,13 @@ namespace XFRNotiiOS.iOS
                 Name = "ReceivedRemoteNotification",
                 time = DateTime.Now,
             });
+            WriteNotificationLog("ReceivedRemoteNotification" + DateTime.Now.ToString());
             #endregion
 
-            NSObject inAppMessage;
+            //NSObject inAppMessage;
 
-            var alert = new UIAlertView("Got push notification", "ReceivedRemoteNotification", null, "OK", null);
-            alert.Show();
+            //var alert = new UIAlertView("Got push notification", "ReceivedRemoteNotification", null, "OK", null);
+            //alert.Show();
             //bool success = userInfo.TryGetValue(new NSString("inAppMessage"), out inAppMessage);
 
             //if (success)
@@ -322,6 +306,76 @@ namespace XFRNotiiOS.iOS
             //var success = userInfo.ToString();
 
         }
+
+        #region Notification Log 的檔案讀寫
+        object thisLock = new object();
+        public string ReadNotificationLog()
+        {
+            string fooFilename = "NotificationLog.txt";
+            string fooContent = "";
+            IFile file;
+
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "../Library/Logs");
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "../Library/Logs");
+            var filename = Path.Combine(folder, fooFilename);
+            try
+            {
+                Directory.CreateDirectory(folder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                fooContent = File.ReadAllText(filename);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
+            //IFolder rootFolder = FileSystem.Current.LocalStorage;
+            //IFolder folder =  rootFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists).Result;
+            //var fooResult =  folder.CheckExistsAsync(fooFilename).Result;
+            //if (fooResult == ExistenceCheckResult.NotFound)
+            //{
+            //    file =  folder.CreateFileAsync(fooFilename, CreationCollisionOption.ReplaceExisting).Result;
+            //}
+            //else
+            //{
+            //    file =  folder.GetFileAsync(fooFilename).Result;
+            //    fooContent =  file.ReadAllTextAsync().Result;
+            //}
+            return fooContent;
+        }
+
+        public void WriteNotificationLog(string fooContent)
+        {
+            string fooFilename = "NotificationLog.txt";
+            IFile file;
+
+            lock (thisLock)
+            {
+                var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "../Library/Logs");
+                var filename = Path.Combine(folder, fooFilename);
+
+                var fooReadContent = ReadNotificationLog();
+                var fooObj = $"{fooReadContent}\r\n{fooContent}";
+                File.WriteAllText(filename, fooObj);
+
+                //var fooReadContent = ReadNotificationLog();
+                //var fooObj = $"{fooReadContent}\r\n{fooContent}";
+                //IFolder rootFolder = FileSystem.Current.LocalStorage;
+                //IFolder folder = rootFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists).Result;
+                //file = folder.CreateFileAsync(fooFilename, CreationCollisionOption.ReplaceExisting).Result;
+                //file.WriteAllTextAsync(fooObj).Wait();
+            }
+            return;
+        }
+        #endregion
     }
 
     public class iOSInitializer : IPlatformInitializer

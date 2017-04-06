@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using PCLStorage;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -33,6 +34,18 @@ namespace XFRNotiiOS.ViewModels
         }
         #endregion
 
+        #region NotificationLogInformation
+        private string _NotificationLogInformation;
+        /// <summary>
+        /// NotificationLogInformation
+        /// </summary>
+        public string NotificationLogInformation
+        {
+            get { return this._NotificationLogInformation; }
+            set { this.SetProperty(ref this._NotificationLogInformation, value); }
+        }
+        #endregion
+
         #endregion
 
         #region 集合類別的 Property
@@ -47,6 +60,10 @@ namespace XFRNotiiOS.ViewModels
         #endregion
 
         #region 命令物件欄位
+
+        public DelegateCommand ReadAgainCommand { get; set; }
+        public DelegateCommand ResetCommand { get; set; }
+
         #endregion
 
         #region 注入物件欄位
@@ -68,7 +85,14 @@ namespace XFRNotiiOS.ViewModels
             #endregion
 
             #region 頁面中綁定的命令
-
+            ResetCommand = new DelegateCommand(async () =>
+            {
+                await WriteNotificationLog("");
+            });
+            ReadAgainCommand = new DelegateCommand(async () =>
+            {
+                NotificationLogInformation = await ReadNotificationLog();
+            });
             #endregion
 
             #region 事件聚合器訂閱
@@ -137,8 +161,44 @@ namespace XFRNotiiOS.ViewModels
         /// <returns></returns>
         private async Task ViewModelInit()
         {
+            NotificationLogInformation = await ReadNotificationLog();
             await Task.Delay(100);
         }
+
+        #region Notification Log 的檔案讀寫
+        public async Task<string> ReadNotificationLog()
+        {
+            string fooFilename = "NotificationLog.txt";
+            string fooContent = "";
+            IFile file;
+
+            IFolder rootFolder = FileSystem.Current.LocalStorage;
+            IFolder folder = await rootFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+            var fooResult = await folder.CheckExistsAsync(fooFilename);
+            if (fooResult == ExistenceCheckResult.NotFound)
+            {
+                file = await folder.CreateFileAsync(fooFilename, CreationCollisionOption.ReplaceExisting);
+            }
+            else
+            {
+                file = await folder.GetFileAsync(fooFilename);
+                fooContent = await file.ReadAllTextAsync();
+            }
+            return fooContent;
+        }
+
+        public async Task WriteNotificationLog(string fooContent)
+        {
+            string fooFilename = "NotificationLog.txt";
+            IFile file;
+
+            IFolder rootFolder = FileSystem.Current.LocalStorage;
+            IFolder folder = await rootFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
+            file = await folder.CreateFileAsync(fooFilename, CreationCollisionOption.ReplaceExisting);
+            await file.WriteAllTextAsync(fooContent);
+            return;
+        }
+        #endregion
         #endregion
 
     }
