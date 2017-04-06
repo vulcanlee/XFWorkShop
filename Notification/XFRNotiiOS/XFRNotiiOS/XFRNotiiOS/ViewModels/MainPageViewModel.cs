@@ -21,6 +21,18 @@ namespace XFRNotiiOS.ViewModels
 
         #region 基本型別與類別的 Property
 
+        #region UpdateInformation
+        private string _UpdateInformation = "";
+        /// <summary>
+        /// UpdateInformation
+        /// </summary>
+        public string UpdateInformation
+        {
+            get { return this._UpdateInformation; }
+            set { this.SetProperty(ref this._UpdateInformation, value); }
+        }
+        #endregion
+
         #endregion
 
         #region 集合類別的 Property
@@ -70,6 +82,11 @@ namespace XFRNotiiOS.ViewModels
                     await _navigationService.NavigateAsync("DetailPage", fooPara);
                     #endregion
                 }
+            });
+
+            _eventAggregator.GetEvent<UpdateInfoEvent>().Subscribe(x =>
+            {
+                UpdateInformation += $"{x.time.ToString()} {x.Name}\r\n";
             });
             #endregion
         }

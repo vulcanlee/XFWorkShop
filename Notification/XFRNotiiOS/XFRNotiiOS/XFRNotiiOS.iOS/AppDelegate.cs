@@ -132,7 +132,13 @@ namespace XFRNotiiOS.iOS
             myContainer = (App.Current as PrismApplication).Container;
             #endregion
 
-            var fooJson = JsonConvert.SerializeObject(new LocalNotificationPayload());
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "FinishedLaunching",
+                time = DateTime.Now,
+            });
+            #endregion
             return base.FinishedLaunching(app, options);
 
         }
@@ -144,6 +150,14 @@ namespace XFRNotiiOS.iOS
         /// <param name="deviceToken"></param>
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "RegisteredForRemoteNotifications",
+                time = DateTime.Now,
+            });
+            #endregion
+
             //string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
             string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"args\":\"$(argsParam)\"}}";
 
@@ -153,13 +167,74 @@ namespace XFRNotiiOS.iOS
                 { "body", templateBodyAPNS}
             };
 
-            // Register for push with your mobile app
+
+            //Hub.UnregisterAllAsync(deviceToken, (error) => {
+            //    if (error != null)
+            //    {
+            //        Console.WriteLine("Error calling Unregister: {0}", error.ToString());
+            //        return;
+            //    }
+
+            //    NSSet tags = null; // create tags if you want
+            //    Hub.RegisterNativeAsync(deviceToken, tags, (errorCallback) => {
+            //        if (errorCallback != null)
+            //            Console.WriteLine("RegisterNativeAsync error: " + errorCallback.ToString());
+            //    });
+            //});
+
+            #region 註冊新的 DeviceToken 到 Azure 推播中樞內
+            #region 取得現在的 DeviceToken
+            var DeviceToken = deviceToken.Description;
+            if (!string.IsNullOrWhiteSpace(DeviceToken))
+            {
+                DeviceToken = DeviceToken.Trim('<').Trim('>');
+                DeviceToken = DeviceToken.Replace(" ", String.Empty);
+            }
+            #endregion
+
+            // 取得先前的 DeviceToken
+            // https://developer.apple.com/reference/foundation/nsuserdefaults/1416603-standarduserdefaults
+            var oldDeviceToken = NSUserDefaults.StandardUserDefaults.StringForKey("PushDeviceToken");
+
+            // DeviceToken 是否有變動過
+            if (string.IsNullOrEmpty(oldDeviceToken) || !oldDeviceToken.Equals(DeviceToken))
+            {
+
+                //var cs = SBConnectionString.CreateListenAccess(
+                // new NSUrl("sb://#myhubname#.servicebus.windows.net/"),
+                // "#listenkey#");
+
+                //// Register our information with Azure
+                //var hub = new SBNotificationHub(cs, "#myhubname#");
+
+                //hub.RegisterNativeAsync(DeviceToken, null, err => {
+                //    if (err != null)
+                //    {
+                //        Console.WriteLine("Error: " + err.Description);
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine("Success");
+                //    }
+                //});
+            }
+
+            NSUserDefaults.StandardUserDefaults.SetString(DeviceToken, "PushDeviceToken");
             Push push = GlobalHelper.AzureMobileClient.GetPush();
             await push.RegisterAsync(deviceToken, templates);
+            #endregion
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "FailedToRegisterForRemoteNotifications",
+                time = DateTime.Now,
+            });
+            #endregion
+
             var alert = new UIAlertView("警告", "註冊 APNS 失敗", null, "OK", null);
             alert.Show();
         }
@@ -172,7 +247,15 @@ namespace XFRNotiiOS.iOS
         /// <param name="completionHandler"></param>
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            if(CoolStartApp == true)
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "DidReceiveRemoteNotification",
+                time = DateTime.Now,
+            });
+            #endregion
+
+            if (CoolStartApp == true)
             {
                 return;
             }
@@ -197,7 +280,7 @@ namespace XFRNotiiOS.iOS
                 avAlert.Show();
 
                 #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
-                if (string.IsNullOrEmpty(args)==false)
+                if (string.IsNullOrEmpty(args) == false)
                 {
                     // 將夾帶的 Payload 的 JSON 字串取出來
                     var fooPayload = args;
@@ -217,6 +300,14 @@ namespace XFRNotiiOS.iOS
 
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "ReceivedRemoteNotification",
+                time = DateTime.Now,
+            });
+            #endregion
+
             NSObject inAppMessage;
 
             var alert = new UIAlertView("Got push notification", "ReceivedRemoteNotification", null, "OK", null);

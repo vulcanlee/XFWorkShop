@@ -5,7 +5,10 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="XFRNotiiOS.Views.MainPage"
              Title="遠端推播訊息通知測試首頁">
-    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <Label Text="{Binding Title}" />
+        <Editor
+            Text="{Binding UpdateInformation}"
+            HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
     </StackLayout>
 </ContentPage>
