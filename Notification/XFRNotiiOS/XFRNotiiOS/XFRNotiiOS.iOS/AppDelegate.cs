@@ -236,51 +236,63 @@ namespace XFRNotiiOS.iOS
             WriteNotificationLog("DidReceiveRemoteNotification" + DateTime.Now.ToString());
             #endregion
 
+            //if (UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background || (UIApplication.SharedApplication.ApplicationState == UIApplicationState.Inactive ))
+            //{
+            //completionHandler(UIBackgroundFetchResult.NewData);
+            //    return;
+            //}
+
             if (CoolStartApp == true)
             {
                 return;
             }
 
-            NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
-
-            #region 取出相關推播通知的 Payload
-            string alert = string.Empty;
-            string args = string.Empty;
-            if (aps.ContainsKey(new NSString("alert")))
-                alert = (aps[new NSString("alert")] as NSString).ToString();
-
-            if (aps.ContainsKey(new NSString("args")))
-                args = (aps[new NSString("args")] as NSString).ToString();
-            #endregion
-
-            #region 因為應用程式正在前景，所以，顯示一個提示訊息對話窗
-            if (!string.IsNullOrEmpty(args))
+            if (userInfo.ContainsKey(new NSString("aps")))
             {
-                SystemSound.Vibrate.PlaySystemSound();
-                UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
-                avAlert.Show();
-
-                #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
-                if (string.IsNullOrEmpty(args) == false)
+                try
                 {
-                    // 將夾帶的 Payload 的 JSON 字串取出來
-                    var fooPayload = args;
+                    NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
 
-                    // 將 JSON 字串反序列化，並送到 核心PCL 
-                    var fooFromBase64 = Convert.FromBase64String(fooPayload);
-                    fooPayload = Encoding.UTF8.GetString(fooFromBase64);
+                    #region 取出相關推播通知的 Payload
+                    string alert = string.Empty;
+                    string args = string.Empty;
+                    if (aps.ContainsKey(new NSString("alert")))
+                        alert = (aps[new NSString("alert")] as NSString).ToString();
 
-                    LocalNotificationPayload fooLocalNotificationPayload = JsonConvert.DeserializeObject<LocalNotificationPayload>(fooPayload);
+                    if (aps.ContainsKey(new NSString("args")))
+                        args = (aps[new NSString("args")] as NSString).ToString();
+                    #endregion
 
-                    myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationToPCLEvent>().Publish(fooLocalNotificationPayload);
+                    #region 因為應用程式正在前景，所以，顯示一個提示訊息對話窗
+                    if (!string.IsNullOrEmpty(args))
+                    {
+                        SystemSound.Vibrate.PlaySystemSound();
+                        UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
+                        avAlert.Show();
+
+                        #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
+                        if (string.IsNullOrEmpty(args) == false)
+                        {
+                            // 將夾帶的 Payload 的 JSON 字串取出來
+                            var fooPayload = args;
+
+                            // 將 JSON 字串反序列化，並送到 核心PCL 
+                            var fooFromBase64 = Convert.FromBase64String(fooPayload);
+                            fooPayload = Encoding.UTF8.GetString(fooFromBase64);
+
+                            LocalNotificationPayload fooLocalNotificationPayload = JsonConvert.DeserializeObject<LocalNotificationPayload>(fooPayload);
+
+                            myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationToPCLEvent>().Publish(fooLocalNotificationPayload);
+                        }
+                        #endregion
+                    }
+                    #endregion
                 }
-                #endregion
+                catch { }
             }
-            #endregion
-
         }
 
-        
+
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
             #region 檢測點
