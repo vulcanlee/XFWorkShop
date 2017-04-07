@@ -204,6 +204,11 @@ namespace XFRNotiiOS.iOS
             #endregion
         }
 
+        /// <summary>
+        /// 若與 APNS 註冊失敗，則會呼叫這個方法
+        /// </summary>
+        /// <param name="application"></param>
+        /// <param name="error"></param>
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
             #region 檢測點
@@ -215,7 +220,7 @@ namespace XFRNotiiOS.iOS
             WriteNotificationLog("FailedToRegisterForRemoteNotifications" + DateTime.Now.ToString());
             #endregion
 
-            var alert = new UIAlertView("警告", "註冊 APNS 失敗", null, "OK", null);
+            var alert = new UIAlertView("警告", "註冊 APNS 失敗:"+error.ToString(), null, "OK", null);
             alert.Show();
         }
 
@@ -247,6 +252,7 @@ namespace XFRNotiiOS.iOS
                 return;
             }
 
+            #region 取出 aps 推播內容，進行處理
             if (userInfo.ContainsKey(new NSString("aps")))
             {
                 try
@@ -290,6 +296,7 @@ namespace XFRNotiiOS.iOS
                 }
                 catch { }
             }
+            #endregion
         }
 
 
@@ -304,19 +311,51 @@ namespace XFRNotiiOS.iOS
             WriteNotificationLog("ReceivedRemoteNotification" + DateTime.Now.ToString());
             #endregion
 
-            //NSObject inAppMessage;
+            #region 取出 aps 推播內容，進行處理
+            if (userInfo.ContainsKey(new NSString("aps")))
+            {
+                try
+                {
+                    NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
 
-            //var alert = new UIAlertView("Got push notification", "ReceivedRemoteNotification", null, "OK", null);
-            //alert.Show();
-            //bool success = userInfo.TryGetValue(new NSString("inAppMessage"), out inAppMessage);
+                    #region 取出相關推播通知的 Payload
+                    string alert = string.Empty;
+                    string args = string.Empty;
+                    if (aps.ContainsKey(new NSString("alert")))
+                        alert = (aps[new NSString("alert")] as NSString).ToString();
 
-            //if (success)
-            //{
-            //    var alert = new UIAlertView("Got push notification", inAppMessage.ToString(), null, "OK", null);
-            //    alert.Show();
-            //}
-            //var success = userInfo.ToString();
+                    if (aps.ContainsKey(new NSString("args")))
+                        args = (aps[new NSString("args")] as NSString).ToString();
+                    #endregion
 
+                    #region 因為應用程式正在前景，所以，顯示一個提示訊息對話窗
+                    if (!string.IsNullOrEmpty(args))
+                    {
+                        SystemSound.Vibrate.PlaySystemSound();
+                        UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
+                        avAlert.Show();
+
+                        #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
+                        if (string.IsNullOrEmpty(args) == false)
+                        {
+                            // 將夾帶的 Payload 的 JSON 字串取出來
+                            var fooPayload = args;
+
+                            // 將 JSON 字串反序列化，並送到 核心PCL 
+                            var fooFromBase64 = Convert.FromBase64String(fooPayload);
+                            fooPayload = Encoding.UTF8.GetString(fooFromBase64);
+
+                            LocalNotificationPayload fooLocalNotificationPayload = JsonConvert.DeserializeObject<LocalNotificationPayload>(fooPayload);
+
+                            myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationToPCLEvent>().Publish(fooLocalNotificationPayload);
+                        }
+                        #endregion
+                    }
+                    #endregion
+                }
+                catch { }
+            }
+            #endregion
         }
 
         #region Notification Log 的檔案讀寫
