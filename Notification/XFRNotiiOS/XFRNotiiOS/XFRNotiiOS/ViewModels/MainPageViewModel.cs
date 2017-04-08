@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using XFRNotiiOS.Models;
+using XFRNotiiOS.Services;
 
 namespace XFRNotiiOS.ViewModels
 {
@@ -70,28 +71,30 @@ namespace XFRNotiiOS.ViewModels
 
         private readonly IEventAggregator _eventAggregator;
         private readonly INavigationService _navigationService;
+        private readonly ILogService _logService;
         #endregion
 
         #endregion
 
         #region Constructor 建構式
-        public MainPageViewModel(INavigationService navigationService, IEventAggregator eventAggregator)
+        public MainPageViewModel(INavigationService navigationService, IEventAggregator eventAggregator, 
+            ILogService logService)
         {
 
             #region 相依性服務注入的物件
-
+            _logService = logService;
             _eventAggregator = eventAggregator;
             _navigationService = navigationService;
             #endregion
 
             #region 頁面中綁定的命令
-            ResetCommand = new DelegateCommand(async () =>
+            ResetCommand = new DelegateCommand(() =>
             {
-                await WriteNotificationLog("");
+                _logService.Write("");
             });
-            ReadAgainCommand = new DelegateCommand(async () =>
+            ReadAgainCommand = new DelegateCommand( () =>
             {
-                NotificationLogInformation = await ReadNotificationLog();
+                NotificationLogInformation = _logService.Read();
             });
             #endregion
 
@@ -161,7 +164,7 @@ namespace XFRNotiiOS.ViewModels
         /// <returns></returns>
         private async Task ViewModelInit()
         {
-            NotificationLogInformation = await ReadNotificationLog();
+            NotificationLogInformation = _logService.Read();
             await Task.Delay(100);
         }
 

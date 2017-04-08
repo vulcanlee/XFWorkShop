@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using PCLStorage;
 using System.IO;
+using XFRNotiiOS.Services;
+using XFRNotiiOS.iOS.Services;
 
 namespace XFRNotiiOS.iOS
 {
@@ -141,7 +143,8 @@ namespace XFRNotiiOS.iOS
                 time = DateTime.Now,
             });
 
-            WriteNotificationLog("FinishedLaunching" + DateTime.Now.ToString());
+            ILogService fooILogService = new LogService();
+            fooILogService.Write("FinishedLaunching : " + DateTime.Now.ToString());
             #endregion
             return base.FinishedLaunching(app, options);
 
@@ -160,18 +163,25 @@ namespace XFRNotiiOS.iOS
                 Name = "RegisteredForRemoteNotifications",
                 time = DateTime.Now,
             });
-            WriteNotificationLog("RegisteredForRemoteNotifications" + DateTime.Now.ToString());
+            ILogService fooILogService = new LogService();
+            fooILogService.Write("RegisteredForRemoteNotifications : " + DateTime.Now.ToString());
             #endregion
 
             #region 建立要接收的推播格式
             //string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
             //string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"args\":\"$(argsParam)\"}}";
             string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\", \"sound\" : \"default\", \"args\":\"$(argsParam)\"}}";
+            string templateBodyAPNS1 = "{\"aps\":{\"alert\":\"$(messageParam)\", \"content-available\" : 1}}";
 
             JObject templates = new JObject();
             templates["genericMessage"] = new JObject
             {
                 { "body", templateBodyAPNS}
+            };
+            JObject templates1 = new JObject();
+            templates1["genericMessage"] = new JObject
+            {
+                { "body", templateBodyAPNS1}
             };
             #endregion
 
@@ -200,6 +210,7 @@ namespace XFRNotiiOS.iOS
             }
             Push push = GlobalHelper.AzureMobileClient.GetPush();
             await push.RegisterAsync(deviceToken, templates);
+            await push.RegisterAsync(deviceToken, templates1);
             #endregion
             #endregion
         }
@@ -217,10 +228,11 @@ namespace XFRNotiiOS.iOS
                 Name = "FailedToRegisterForRemoteNotifications",
                 time = DateTime.Now,
             });
-            WriteNotificationLog("FailedToRegisterForRemoteNotifications" + DateTime.Now.ToString());
+            ILogService fooILogService = new LogService();
+            fooILogService.Write("FailedToRegisterForRemoteNotifications : " + DateTime.Now.ToString());
             #endregion
 
-            var alert = new UIAlertView("警告", "註冊 APNS 失敗:"+error.ToString(), null, "OK", null);
+            var alert = new UIAlertView("警告", "註冊 APNS 失敗:" + error.ToString(), null, "OK", null);
             alert.Show();
         }
 
@@ -233,24 +245,107 @@ namespace XFRNotiiOS.iOS
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
             #region 檢測點
-            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            try
             {
-                Name = "DidReceiveRemoteNotification",
-                time = DateTime.Now,
-            });
-            WriteNotificationLog("DidReceiveRemoteNotification" + DateTime.Now.ToString());
+                myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+                {
+                    Name = "DidReceiveRemoteNotification",
+                    time = DateTime.Now,
+                });
+            }
+            catch { }
+
+            try
+            {
+                ILogService fooILogService = new LogService();
+                fooILogService.Write("DidReceiveRemoteNotification : " + DateTime.Now.ToString());
+            }
+            catch { }
+
             #endregion
 
-            if (application.ApplicationState == UIApplicationState.Inactive)
-            {
-                completionHandler(UIBackgroundFetchResult.NoData);
-                return;
-            }
+            //if (application.ApplicationState == UIApplicationState.Inactive)
+            //{
+            //    completionHandler(UIBackgroundFetchResult.NoData);
+            //    return;
+            //}
 
             //if (CoolStartApp == true)
             //{
             //    return;
             //}
+
+            #region 取出 aps 推播內容，進行處理
+            try
+            {
+                if (userInfo.ContainsKey(new NSString("aps")))
+                {
+                    try
+                    {
+                        NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+
+                        #region 取出相關推播通知的 Payload
+                        string alert = string.Empty;
+                        string args = string.Empty;
+                        if (aps.ContainsKey(new NSString("alert")))
+                            alert = (aps[new NSString("alert")] as NSString).ToString();
+
+                        if (aps.ContainsKey(new NSString("args")))
+                            args = (aps[new NSString("args")] as NSString).ToString();
+                        #endregion
+
+                        #region 因為應用程式正在前景，所以，顯示一個提示訊息對話窗
+                        if (!string.IsNullOrEmpty(args))
+                        {
+                            SystemSound.Vibrate.PlaySystemSound();
+                            UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
+                            avAlert.Show();
+
+                            #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
+                            if (string.IsNullOrEmpty(args) == false)
+                            {
+                                // 將夾帶的 Payload 的 JSON 字串取出來
+                                var fooPayload = args;
+
+                                // 將 JSON 字串反序列化，並送到 核心PCL 
+                                var fooFromBase64 = Convert.FromBase64String(fooPayload);
+                                fooPayload = Encoding.UTF8.GetString(fooFromBase64);
+
+                                LocalNotificationPayload fooLocalNotificationPayload = JsonConvert.DeserializeObject<LocalNotificationPayload>(fooPayload);
+
+                                myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationToPCLEvent>().Publish(fooLocalNotificationPayload);
+                            }
+                            #endregion
+                        }
+                        #endregion
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+
+            try
+            {
+                ILogService fooILogService = new LogService();
+                fooILogService.Write("DidReceiveRemoteNotification Complete : " + DateTime.Now.ToString());
+            }
+            catch { }
+            completionHandler(UIBackgroundFetchResult.NoData);
+
+            #endregion
+        }
+
+
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            #region 檢測點
+            myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
+            {
+                Name = "ReceivedRemoteNotification",
+                time = DateTime.Now,
+            });
+            WriteNotificationLog("ReceivedRemoteNotification" + DateTime.Now.ToString());
+            #endregion
 
             #region 取出 aps 推播內容，進行處理
             if (userInfo.ContainsKey(new NSString("aps")))
@@ -296,69 +391,8 @@ namespace XFRNotiiOS.iOS
                 }
                 catch { }
             }
-            completionHandler(UIBackgroundFetchResult.NoData);
-
             #endregion
         }
-
-
-        //public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
-        //{
-        //    #region 檢測點
-        //    myContainer.Resolve<IEventAggregator>().GetEvent<UpdateInfoEvent>().Publish(new UpdateInfoEventPayload
-        //    {
-        //        Name = "ReceivedRemoteNotification",
-        //        time = DateTime.Now,
-        //    });
-        //    WriteNotificationLog("ReceivedRemoteNotification" + DateTime.Now.ToString());
-        //    #endregion
-
-        //    #region 取出 aps 推播內容，進行處理
-        //    if (userInfo.ContainsKey(new NSString("aps")))
-        //    {
-        //        try
-        //        {
-        //            NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
-
-        //            #region 取出相關推播通知的 Payload
-        //            string alert = string.Empty;
-        //            string args = string.Empty;
-        //            if (aps.ContainsKey(new NSString("alert")))
-        //                alert = (aps[new NSString("alert")] as NSString).ToString();
-
-        //            if (aps.ContainsKey(new NSString("args")))
-        //                args = (aps[new NSString("args")] as NSString).ToString();
-        //            #endregion
-
-        //            #region 因為應用程式正在前景，所以，顯示一個提示訊息對話窗
-        //            if (!string.IsNullOrEmpty(args))
-        //            {
-        //                SystemSound.Vibrate.PlaySystemSound();
-        //                UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
-        //                avAlert.Show();
-
-        //                #region 使用 Prism 事件聚合器，送訊息給 核心PCL，切換到所指定的頁面
-        //                if (string.IsNullOrEmpty(args) == false)
-        //                {
-        //                    // 將夾帶的 Payload 的 JSON 字串取出來
-        //                    var fooPayload = args;
-
-        //                    // 將 JSON 字串反序列化，並送到 核心PCL 
-        //                    var fooFromBase64 = Convert.FromBase64String(fooPayload);
-        //                    fooPayload = Encoding.UTF8.GetString(fooFromBase64);
-
-        //                    LocalNotificationPayload fooLocalNotificationPayload = JsonConvert.DeserializeObject<LocalNotificationPayload>(fooPayload);
-
-        //                    myContainer.Resolve<IEventAggregator>().GetEvent<LocalNotificationToPCLEvent>().Publish(fooLocalNotificationPayload);
-        //                }
-        //                #endregion
-        //            }
-        //            #endregion
-        //        }
-        //        catch { }
-        //    }
-        //    #endregion
-        //}
 
         #region Notification Log 的檔案讀寫
         object thisLock = new object();
@@ -429,6 +463,7 @@ namespace XFRNotiiOS.iOS
             return;
         }
         #endregion
+
     }
 
     public class iOSInitializer : IPlatformInitializer

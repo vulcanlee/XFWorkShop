@@ -39,6 +39,7 @@
     <Compile Include="Models\UpdateInfoEvent.cs" />
     <Compile Include="Models\LocalNotificationEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ILogService.cs" />
     <Compile Include="ViewModels\DetailPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
   </ItemGroup>
