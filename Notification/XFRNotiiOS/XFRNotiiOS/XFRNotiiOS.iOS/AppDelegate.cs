@@ -335,7 +335,6 @@ namespace XFRNotiiOS.iOS
             #endregion
         }
 
-
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
             #region 檢測點

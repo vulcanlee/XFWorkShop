@@ -10,7 +10,7 @@ namespace XFRNotiiOS.Helpers
     public class GlobalHelper
     {
         // Replace strings with your mobile services and gateway URLs.
-        public static string ApplicationURL = @"https://xamarinhandsonlab.azurewebsites.net";
+        public static string ApplicationURL = @"https://xamarinazureday.azurewebsites.net";
 
         public static MobileServiceClient AzureMobileClient = new MobileServiceClient(ApplicationURL);
 
